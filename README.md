@@ -1,2 +1,2 @@
 # Chiffrement DES
-Un site qui utilise un algorithme (Pseudo) Des pour chiffrer et dechiffrer des fichiers.
+Un site qui utilise un algorithme Des pour chiffrer et dechiffrer des fichiers.
