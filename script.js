@@ -76,7 +76,7 @@ function showSuccess(filename, size, originalSize, downloadUrl, type) {
     const container = document.getElementById('alert-container');
     const title = type === 'encrypt' ? 'Chiffrement réussi !' : 'Déchiffrement réussi !';
     const sizeInfo = originalSize ? '<p class="result-size">Taille originale: ' + formatFileSize(originalSize) + '</p>' : '';
-    container.innerHTML = '<div class="alert alert-success"><div class="result-content"><p class="result-title">' + title + '</p><p class="result-text">Fichier: ' + filename + ' (' + formatFileSize(size) + ')</p>' + sizeInfo + '<a href="' + downloadUrl + '" download="' + filename + '" class="btn download-btn">⬇️ Télécharger le fichier</a></div></div>';
+    container.innerHTML = '<div class="alert alert-success"><div class="result-content"><p class="result-title">' + title + '</p><p class="result-text">Fichier: ' + filename + ' (' + formatFileSize(size) + ')</p>' + sizeInfo + '<a href="' + downloadUrl + '" download="' + filename + '" class="btn download-btn">Télécharger le fichier</a></div></div>';
 }
 
 // ========= PARTIE 2 : OUTILS BINAIRES ET GÉNÉRATION DE CLÉS =========
