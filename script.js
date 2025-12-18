@@ -1,5 +1,5 @@
-// ========= PARTIE 1 : CONSTANTES ET GESTION DE L'INTERFACE =========
-// PERSONNE 1 : Présente les tables DES, les constantes et les fonctions d'interface (UI).
+// ========= PARTIE 1 : INTERFACE UTILISATEUR =========
+// PERSONNE 1 : Présente l'interface (HTML/CSS), les constantes et la structure globale.
 
 let encryptFile = null;
 let decryptFile = null;
@@ -101,8 +101,8 @@ function showSuccess(filename, size, originalSize, downloadUrl, type) {
 }
 
 
-// ========= PARTIE 2 : OUTILS BINAIRES ET GÉNÉRATION DE CLÉS =========
-// PERSONNE 2 : Présente la manipulation des bits, la gestion de l'IV et la génération des clés (Schedule DES & WebCrypto AES).
+// ========= PARTIE 2 : OUTILS ET CŒUR DES (RAPPEL) =========
+// PERSONNE 2 : Présente les outils binaires, la génération de clés et rappelle brièvement le fonctionnement du DES (déjà vu).
 
 // Génération de clé DES via hachage SHA-256 (64 premiers bits)
 async function generateDESKey(password) {
@@ -188,8 +188,8 @@ function generateSubkeys(key) {
 }
 
 
-// ========= PARTIE 3 : CŒUR ALGORITHMIQUE (DES) =========
-// PERSONNE 3 : Présente la logique pure du DES : Fonction de Feistel, S-Box et le chiffrement de bloc.
+// (SUITE PARTIE 2) : LOGIQUE DES BLOCS DE BASE
+// Rappel rapide : Fonction de Feistel, S-Box et chiffrement d'un bloc unique.
 
 function sboxLookup(input) {
     const output = [];
@@ -233,10 +233,10 @@ function decryptBlock(block, key) {
 }
 
 
-// ========= PARTIE 4 : MODES OPERATOIRES (ECB/CBC/AES) ET EVENTS =========
-// PERSONNE 4 : Présente l'implémentation des modes ECB/CBC, l'intégration AES et les gestionnaires d'événements.
+// ========= PARTIE 3 : IMPLEMENTATION DES MODES (ECB vs CFB) =========
+// PERSONNE 3 : Présente la nouveauté : la gestion des modes d'opération (ECB et CFB) et le padding.
 
-// --- Implémentation DES (ECB & CBC) ---
+// --- Implémentation DES (ECB & CFB) ---
 
 async function encryptDataDES(data, password, mode) {
     const key = await generateDESKey(password);
@@ -252,30 +252,34 @@ async function encryptDataDES(data, password, mode) {
     const encrypted = new Uint8Array(paddedLength);
     let iv = new Uint8Array(8); // IV vide par défaut pour ECB (Note: ECB n'utilise pas d'IV techniquement, mais pour simplifier la structure de fichier)
 
-    // Si CBC, générer un IV aléatoire
-    if (mode === 'CBC') {
+    // Si CFB, générer un IV aléatoire
+    if (mode === 'CFB') {
         crypto.getRandomValues(iv);
     }
 
-    let previousBlock = iv; // Previous block sert d'IV initialement pour CBC
+    let previousBlock = iv; // Previous block sert d'IV initialement pour CFB
 
     for (let i = 0; i < paddedLength; i += 8) {
         let block = padded.slice(i, i + 8);
+        let encryptedBlock;
 
-        if (mode === 'CBC') {
-            // CBC: XOR avec le bloc chiffré précédent (ou IV) AVANT chiffrement
-            // Conversion en bits pour XOR manuel
+        if (mode === 'CFB') {
+            // CFB: On chiffre le bloc précédent (ou IV) pour obtenir le keystream
+            const keystream = encryptBlock(previousBlock, key);
+            // XOR avec le plaintext pour obtenir le ciphertext
             const blockBits = bytesToBits(block);
-            const prevBits = bytesToBits(previousBlock);
-            const xoredBits = xor(blockBits, prevBits);
-            block = bitsToBytes(xoredBits);
+            const keyStreamBits = bytesToBits(keystream);
+            const xoredBits = xor(blockBits, keyStreamBits);
+            encryptedBlock = bitsToBytes(xoredBits);
+
+            // Le bloc précédent devient le bloc chiffré actuel
+            previousBlock = encryptedBlock;
+        } else {
+            // ECB: On chiffre directement le bloc
+            encryptedBlock = encryptBlock(block, key);
         }
 
-        const encryptedBlock = encryptBlock(block, key);
         encrypted.set(encryptedBlock, i);
-
-        // Mise à jour du bloc précédent pour CBC
-        previousBlock = encryptedBlock;
     }
 
     // Header: [4 bytes Taille] [8 bytes IV]
@@ -309,23 +313,30 @@ async function decryptDataDES(data, password, mode) {
 
     for (let i = 0; i < encryptedData.length; i += 8) {
         const block = encryptedData.slice(i, i + 8);
-        const decBlock = decryptBlock(block, key); // Déchiffrement brut
+        if (mode === 'CFB') {
+            // CFB: On chiffre le bloc précédent (ou IV) pour obtenir le keystream (Même en déchiffrement !)
+            const keystream = encryptBlock(previousBlock, key);
 
-        if (mode === 'CBC') {
-            // CBC: XOR avec le bloc chiffré précédent (ou IV) APRÈS déchiffrement
-            const decBits = bytesToBits(decBlock);
-            const prevBits = bytesToBits(previousBlock);
-            const xoredBits = xor(decBits, prevBits);
+            // XOR avec le ciphertext pour obtenir le plaintext
+            const blockBits = bytesToBits(block);
+            const keyStreamBits = bytesToBits(keystream);
+            const xoredBits = xor(blockBits, keyStreamBits);
+
             decrypted.set(bitsToBytes(xoredBits), i);
-            previousBlock = block; // Le ciphertext actuel devient le IV du prochain
+
+            // Pour CFB, le "previousBlock" pour le tour suivant est le ciphertext actuel (block)
+            previousBlock = block;
         } else {
-            // ECB
-            decrypted.set(decBlock, i);
+            // ECB: On déchiffre le bloc directement
+            decrypted.set(decryptBlock(block, key), i);
         }
     }
 
     return decrypted.slice(0, originalLength); // Coupe le padding
 }
+
+// ========= PARTIE 4 : IMPLEMENTATION AES ET EVENEMENTS =========
+// PERSONNE 4 : Présente l'intégration de l'algorithme AES (via Web Crypto) et la gestion des actions utilisateur.
 
 // --- Implémentation AES (Utilisation API Web Crypto) ---
 
