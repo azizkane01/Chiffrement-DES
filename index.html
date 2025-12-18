@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chiffrement DES de Fichiers</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="container">
         <div class="header">
             <div class="header-title">
                 <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                    </path>
                 </svg>
                 <h1>Chiffrement DES</h1>
             </div>
-            <p class="header-subtitle">Ce site chiffre les fichiers en utilisant DES</p>
+            <p class="header-subtitle">Ce site chiffre les fichiers en utilisant l'Algorithme de chiffrement DES</p>
         </div>
 
         <div class="tabs">
@@ -26,12 +30,35 @@
         <div class="content">
             <div id="encrypt-tab" class="tab-content active">
                 <div class="form-group">
+                    <label class="label">Configuration de chiffrement</label>
+                    <div style="display: flex; gap: 1rem;">
+                        <div style="flex: 1;">
+                            <label class="label" style="font-size: 0.9em;">Algorithme</label>
+                            <select id="algorithm-select" class="input" onchange="toggleModeSelect()">
+                                <option value="DES">DES</option>
+                                <option value="AES">AES</option>
+                            </select>
+                        </div>
+                        <div style="flex: 1;" id="mode-group">
+                            <label class="label" style="font-size: 0.9em;">Mode</label>
+                            <select id="mode-select" class="input">
+                                <option value="ECB">ECB</option>
+                                <option value="CBC">CBC</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <label class="label">Sélectionner un fichier</label>
                     <div class="file-input-wrapper">
-                        <input type="file" id="encrypt-file" class="file-input" accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.jpg,.png" onchange="handleFileSelect('encrypt')">
+                        <input type="file" id="encrypt-file" class="file-input"
+                            accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.jpg,.png" onchange="handleFileSelect('encrypt')">
                         <label for="encrypt-file" class="file-label">
                             <svg class="file-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
+                                </path>
                             </svg>
                             <div>
                                 <p class="file-text" id="encrypt-file-name">Cliquez pour choisir un fichier</p>
@@ -44,21 +71,45 @@
 
                 <div class="form-group">
                     <label class="label">Mot de passe de chiffrement</label>
-                    <input type="password" id="encrypt-password" class="input" placeholder="Entrez un mot de passe sécurisé (min. 4 caractères)">
+                    <input type="password" id="encrypt-password" class="input"
+                        placeholder="Entrez un mot de passe sécurisé (min. 4 caractères)">
                     <p class="input-hint">⚠️ Mémorisez bien ce mot de passe, il sera nécessaire pour déchiffrer</p>
                 </div>
 
-                <button class="btn btn-encrypt" onclick="handleEncrypt()" id="encrypt-btn">🔒 Chiffrer le fichier</button>
+                <button class="btn btn-encrypt" onclick="handleEncrypt()" id="encrypt-btn">🔒 Chiffrer le
+                    fichier</button>
             </div>
 
             <div id="decrypt-tab" class="tab-content">
                 <div class="form-group">
+                    <label class="label">Configuration de déchiffrement</label>
+                    <div style="display: flex; gap: 1rem;">
+                        <div style="flex: 1;">
+                            <label class="label" style="font-size: 0.9em;">Algorithme</label>
+                            <select id="decrypt-algorithm-select" class="input" onchange="toggleDecryptModeSelect()">
+                                <option value="DES">DES</option>
+                                <option value="AES">AES</option>
+                            </select>
+                        </div>
+                        <div style="flex: 1;" id="decrypt-mode-group">
+                            <label class="label" style="font-size: 0.9em;">Mode</label>
+                            <select id="decrypt-mode-select" class="input">
+                                <option value="ECB">ECB</option>
+                                <option value="CBC">CBC</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="label">Sélectionner le fichier chiffré</label>
                     <div class="file-input-wrapper">
-                        <input type="file" id="decrypt-file" class="file-input" accept=".encrypted,*" onchange="handleFileSelect('decrypt')">
+                        <input type="file" id="decrypt-file" class="file-input" accept=".encrypted,*"
+                            onchange="handleFileSelect('decrypt')">
                         <label for="decrypt-file" class="file-label decrypt">
                             <svg class="file-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                </path>
                             </svg>
                             <div>
                                 <p class="file-text" id="decrypt-file-name">Cliquez pour choisir un fichier</p>
@@ -71,10 +122,12 @@
 
                 <div class="form-group">
                     <label class="label">Mot de passe de déchiffrement</label>
-                    <input type="password" id="decrypt-password" class="input" placeholder="Entrez le mot de passe utilisé pour chiffrer">
+                    <input type="password" id="decrypt-password" class="input"
+                        placeholder="Entrez le mot de passe utilisé pour chiffrer">
                 </div>
 
-                <button class="btn btn-decrypt" onclick="handleDecrypt()" id="decrypt-btn">🔓 Déchiffrer le fichier</button>
+                <button class="btn btn-decrypt" onclick="handleDecrypt()" id="decrypt-btn">🔓 Déchiffrer le
+                    fichier</button>
             </div>
 
             <div id="alert-container"></div>
@@ -91,11 +144,13 @@
             </div>
             <div class="footer-item">
                 <span class="footer-label">Confidentialité:</span>
-                <span>Tout le traitement se fait localement dans votre navigateur donc la vitesse depend de la taille du fichier et de la puissance de votre appareil.</span>
+                <span>Tout le traitement se fait localement dans votre navigateur donc la vitesse depend de la taille du
+                    fichier et de la puissance de votre appareil.</span>
             </div>
         </div>
     </div>
 
     <script src="script.js"></script>
 </body>
+
 </html>
