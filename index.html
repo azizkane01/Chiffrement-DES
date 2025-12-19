@@ -71,8 +71,20 @@
 
                 <div class="form-group">
                     <label class="label">Mot de passe de chiffrement</label>
-                    <input type="password" id="encrypt-password" class="input"
-                        placeholder="Entrez un mot de passe sécurisé (min. 4 caractères)">
+                    <div class="password-container">
+                        <input type="password" id="encrypt-password" class="input"
+                            placeholder="Entrez un mot de passe sécurisé (min. 4 caractères)">
+                        <button class="toggle-password" onclick="togglePassword('encrypt-password', 'encrypt-eye-icon')"
+                            type="button">
+                            <svg id="encrypt-eye-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                style="width: 20px; height: 20px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
+                    </div>
                     <p class="input-hint">⚠️ Mémorisez bien ce mot de passe, il sera nécessaire pour déchiffrer</p>
                 </div>
 
@@ -122,8 +134,20 @@
 
                 <div class="form-group">
                     <label class="label">Mot de passe de déchiffrement</label>
-                    <input type="password" id="decrypt-password" class="input"
-                        placeholder="Entrez le mot de passe utilisé pour chiffrer">
+                    <div class="password-container">
+                        <input type="password" id="decrypt-password" class="input"
+                            placeholder="Entrez le mot de passe utilisé pour chiffrer">
+                        <button class="toggle-password" onclick="togglePassword('decrypt-password', 'decrypt-eye-icon')"
+                            type="button">
+                            <svg id="decrypt-eye-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                style="width: 20px; height: 20px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <button class="btn btn-decrypt" onclick="handleDecrypt()" id="decrypt-btn">🔓 Déchiffrer le
