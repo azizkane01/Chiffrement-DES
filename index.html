@@ -103,7 +103,7 @@
                 <div class="form-group">
                     <label class="label">Sélectionner le fichier chiffré</label>
                     <div class="file-input-wrapper">
-                        <input type="file" id="decrypt-file" class="file-input" accept=".encrypted,*"
+                        <input type="file" id="decrypt-file" class="file-input" accept=".enc,.encrypted,*"
                             onchange="handleFileSelect('decrypt')">
                         <label for="decrypt-file" class="file-label decrypt">
                             <svg class="file-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,7 +113,7 @@
                             </svg>
                             <div>
                                 <p class="file-text" id="decrypt-file-name">Cliquez pour choisir un fichier</p>
-                                <p class="file-subtext">Fichier .encrypted</p>
+                                <p class="file-subtext">Fichier .enc ou .encrypted</p>
                             </div>
                         </label>
                     </div>
@@ -136,7 +136,7 @@
         <div class="footer">
             <div class="footer-item">
                 <span class="footer-label">Sécurité:</span>
-                <span>Algorithme DES avec clé de 64 bits (SHA-256)</span>
+                <span>DES (64 bits) & AES (128 bits) avec hachage SHA-256</span>
             </div>
             <div class="footer-item">
                 <span class="footer-label">Formats supportés:</span>
