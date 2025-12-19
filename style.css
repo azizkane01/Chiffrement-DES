@@ -209,6 +209,13 @@ body {
     margin-top: 8px;
 }
 
+/* Hide native password reveal on Edge/IE */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
+
 .btn {
     width: 100%;
     padding: 16px;
@@ -256,7 +263,9 @@ body {
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .alert {
